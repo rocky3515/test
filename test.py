@@ -1,9 +1,9 @@
 '''
-Author: your name
+Author: shixy
 Date: 2021-12-18 15:56:02
-LastEditTime: 2021-12-21 16:06:58
+LastEditTime: 2021-12-22 18:55:07
 LastEditors: Please set LastEditors
-Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+Description: zhaoyangyongxu 
 FilePath: \GL\test.py
 '''
 #%%
@@ -20,7 +20,7 @@ ZY.login("E000095608","355378Szw@")
 # %%查看流量
 ZY.flowquery('zset')
 
-#%% 
+#%% 小巨人股票代码
 df=pd.read_csv('D:\实习文件\GL\东方财富专精特新小巨人20211219.csv')
 df['代码']=[str(i).rjust(6,"0") for i in df['代码']]
 df['代码']=[f'{i}.sh' if i[0]=='6' else f'{i}.sz' for i in df['代码']]
@@ -44,9 +44,10 @@ w.start()
 stock_list=w.wset("listedsecuritygeneralview","sectorid=a001010100000000;field=wind_code,sec_name")
 stockdf=pd.DataFrame(stock_list.Data,index=stock_list.Fields,columns=stock_list.Codes).T
 w.close()
-# %% 优秀分析师个股一致预期评级表
+# % 优秀分析师个股一致预期评级表
 date_list=ZY.zdates('2017-01-01','2021-01-01')#974
 code_list=[i.lower() for i in stock_list.Data[0]]
+#%%
 data_list=[]
 for date in date_list:
     print(date)
@@ -68,4 +69,22 @@ data
 
 ZY.zset("gs_rpt_goldstock","","",f"report_year={date[:4]},report_period_type={date[5:7]},create_date={date}")
 # %%
- 
+code_list1=[i[:6] for i in code_list]
+data_list=[]
+for date in ZY.zdates('2017-01-01','2017-01-30'):
+    data=ZY.zset("pt_der_indicator_all","",code_list,f"trade_date={date}")
+    if type(data)==pd.core.frame.DataFrame:
+        data_list.append(data)
+        print(date)
+    else:
+        print(f'{date} has no data')
+# %%
+# %%
+ZY.zset("pt_der_indicator_all","",f"{code_list1}",f"trade_date=2019-05-04")
+# %%
+data=ZY.zset("pt_der_indicator_fmgb","",f"{code_list1}","trade_date=2018-04-30")
+data
+# %%
+data=ZY.zset("pt_der_qlty_indicator","",f"{code_list1}","trade_date=2020-01-01,ptype_code=1")
+data
+# %%
